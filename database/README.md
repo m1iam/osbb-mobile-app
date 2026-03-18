@@ -32,4 +32,6 @@
 * **Password:** *Ваш локальний пароль від MySQL*
 
 ##Діаграма зв'язків (ER-Diagram)
-![Database Schema](./db_schema.png)
+<img width="898" height="501" alt="db_schema_diagram" src="https://github.com/user-attachments/assets/eef71c56-94d5-4c63-8714-4e8f45d804ab" />
+
+
