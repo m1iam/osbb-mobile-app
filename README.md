@@ -53,3 +53,18 @@
 - ADR-001-tech-stack.md
 - Onboarding.md
 - DoD.md
+
+## Команда
+
+## Команда
+
+### 👥 Учасники проєкту
+
+- **Олещук Олександра**  
+  *Project Manager / UI/UX Designer*
+
+- **Теслюк Тарас**  
+  *Frontend/Backend Developer*
+
+- **Мостова Соломія**  
+  *System Architect / QA Engineer*
