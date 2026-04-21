@@ -37,22 +37,10 @@
 ## Quick Start
 
 1. Клонувати репозиторій: git clone https://github.com/m1iam/osbb-mobile-app.git
-
-
 2. Перейти в папку проєкту: cd osbb-mobile-app
-
-
 3. Встановити залежності: npm install
-
-
 4. Запустити проєкт: npm start
 
-
-## Документація
-Документація проєкту міститься в папці `docs/`:
-- ADR-001-tech-stack.md
-- Onboarding.md
-- DoD.md
 
 ## Команда
 
