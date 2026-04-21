@@ -36,24 +36,16 @@
 
 ## Quick Start
 
-1. Клонувати репозиторій:
-
-git clone https://github.com/m1iam/osbb-mobile-app.git
+1. Клонувати репозиторій: git clone https://github.com/m1iam/osbb-mobile-app.git
 
 
-2. Перейти в папку проєкту:
-
-cd osbb-mobile-app
+2. Перейти в папку проєкту: cd osbb-mobile-app
 
 
-3. Встановити залежності:
-
-npm install
+3. Встановити залежності: npm install
 
 
-4. Запустити проєкт:
-
-npm start
+4. Запустити проєкт: npm start
 
 
 ## Документація
