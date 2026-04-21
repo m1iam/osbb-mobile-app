@@ -66,3 +66,9 @@
 
 - **Мостова Соломія**  
   *System Architect / QA Engineer*
+
+## Документація
+
+- [ADR-001: Вибір технологічного стеку](docs/ADR-001-tech-stack.md)
+- [Onboarding](docs/Onboarding.md)
+- [Definition of Done](docs/DoD.md)
