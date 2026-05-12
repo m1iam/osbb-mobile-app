@@ -8,12 +8,10 @@
     "scheme": "digitalosbb",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.STOMTO.digitalosbb"
     },
-    
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -24,7 +22,6 @@
       "package": "com.STOMTO.digitalosbb",
       "edgeToEdgeEnabled": true
     },
-
     "plugins": [
       "expo-router",
       [
@@ -37,11 +34,12 @@
         }
       ]
     ],
-
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "855e4e6c-7e3f-4e1a-8c9d-1234567890ab" 
+        "projectId": "bf5d10c8-08e3-4223-839d-fdf7220bfdc7"
       }
-    }
+    },
+    "owner": "m1am"
   }
 }

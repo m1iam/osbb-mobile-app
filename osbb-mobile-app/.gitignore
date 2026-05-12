@@ -41,3 +41,13 @@ app-example
 # generated native folders
 /ios
 /android
+
+.env
+.env.local
+server/.env
+
+# Модулі для сервера (бо в тебе окрема папка)
+server/node_modules/
+
+# Логи сервера
+server/npm-debug.log*

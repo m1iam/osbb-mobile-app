@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import AnnouncementsScreen from './AnnouncementsScreen';
+import ContactsScreen from './ContactsScreen';
 import PaymentsScreen from './PaymentsScreen';
 import ProfileScreen from './ProfileScreen';
 import RequestsScreen from './RequestsScreen';
@@ -47,9 +47,10 @@ export default function HomeScreen() {
   ];
 
   if (currentScreen === 'announcements') {
-    return <AnnouncementsScreen goBack={() => setCurrentScreen('home')} />;
-  }
-
+  return (
+    <ContactsScreen setCurrentScreen={setCurrentScreen} />
+  );
+}
   if (currentScreen === 'requests') {
     return (
       <RequestsScreen

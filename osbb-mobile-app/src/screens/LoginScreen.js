@@ -12,54 +12,88 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import * as Notifications from 'expo-notifications'; // Додано для токенів
+import Constants from 'expo-constants';
 import HomeScreen from './HomeScreen';
+import RegisterScreen from './RegisterScreen';
+import ForgotPasswordScreen from './ForgotPasswordScreen';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState(''); // Змінено з phone на email для безкоштовного OTP
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  const handleLogin = () => {
-    console.log('Кнопка Увійти натиснута');
+  // Функція отримання токена (така ж, як у Register)
+  async function getDeviceTokens() {
+    let token = null;
+    try {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') return null;
 
-    if (!email.trim() || !phone.trim() || !password.trim()) {
+      const tokenData = await Notifications.getExpoPushTokenAsync({
+        projectId: "bf5d10c8-08e3-4223-839d-fdf7220bfdc7" // Твій новий ID з EAS
+      });
+      token = tokenData.data;
+    } catch (error) {
+      console.log('Помилка отримання токена при вході:', error);
+    }
+    return token;
+  }
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
       Alert.alert('Помилка', 'Будь ласка, заповніть усі поля');
       return;
     }
 
-    Alert.alert('Успіх', 'Вхід виконано');
-    setIsLoggedIn(true);
+    const deviceToken = await getDeviceTokens();
+    
+    try {
+      const response = await fetch('http://ТВІЙ_IP:3000/login', { // Заміни на свій IP
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          deviceToken: deviceToken // Оновлюємо токен при кожному вході
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Успіх', 'Код підтвердження надіслано на вашу пошту');
+        // Тут ми пізніше додамо перехід на екран введення OTP коду
+        setIsLoggedIn(true); 
+      } else {
+        Alert.alert('Помилка', data.error || 'Невірні дані');
+      }
+    } catch (error) {
+      Alert.alert('Помилка', 'Не вдалося з’єднатися з сервером');
+    }
   };
 
-  if (isLoggedIn) {
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <HomeScreen />
-      </SafeAreaView>
-    );
-  }
+  if (showRegister) return <RegisterScreen onBack={() => setShowRegister(false)} />;
+  if (showForgotPassword) return <ForgotPasswordScreen onBack={() => setShowForgotPassword(false)} />;
+  if (isLoggedIn) return <SafeAreaView style={{ flex: 1 }}><HomeScreen /></SafeAreaView>;
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
           <View style={styles.container}>
             <View style={styles.topSection}>
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>ОСББ</Text>
-              </View>
-
+              <View style={styles.badge}><Text style={styles.badgeText}>ОСББ</Text></View>
               <Text style={styles.headerText}>Об'єднання співвласників</Text>
               <Text style={styles.headerText}>багатоквартирного будинку</Text>
-
+              
               <Image
                 source={require('../../assets/images/osbb-login.png')}
                 style={styles.image}
@@ -73,7 +107,7 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Електронна адреса"
-                placeholderTextColor="#B8B8B8"
+                placeholderTextColor="#888888" // ВИПРАВЛЕНО: тепер напис видно
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
@@ -82,32 +116,23 @@ export default function LoginScreen() {
 
               <TextInput
                 style={styles.input}
-                placeholder="Номер телефону"
-                placeholderTextColor="#B8B8B8"
-                keyboardType="phone-pad"
-                value={phone}
-                onChangeText={setPhone}
-              />
-
-              <TextInput
-                style={styles.input}
                 placeholder="Пароль"
-                placeholderTextColor="#B8B8B8"
+                placeholderTextColor="#888888" // ВИПРАВЛЕНО
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
               />
 
-              <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleLogin}>
+              <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Увійти</Text>
               </TouchableOpacity>
-            </View>
 
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>Ще немає акаунта? </Text>
-              <TouchableOpacity>
-                <Text style={styles.registerText}>Зареєструватись</Text>
-              </TouchableOpacity>
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>Ще немає акаунта? </Text>
+                <TouchableOpacity onPress={() => setShowRegister(true)}>
+                  <Text style={styles.registerText}>Зареєструватись</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -135,7 +160,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9EFF7',
     alignItems: 'center',
     paddingTop: 20,
-    paddingBottom: 25,
+    paddingBottom: 20,
   },
   badge: {
     backgroundColor: '#8AB8FF',
@@ -156,68 +181,78 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   image: {
-    width: 250,
-    height: 180,
+    width: 230,
+    height: 170,
     marginTop: 12,
   },
   card: {
-    width: '88%',
+    width: '86%',
     backgroundColor: '#FFFFFF',
-    marginTop: -20,
+    marginTop: -10,
     borderRadius: 22,
-    paddingVertical: 25,
+    paddingVertical: 24,
     paddingHorizontal: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 6,
+    alignItems: 'center',
   },
   cardTitle: {
     textAlign: 'center',
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
     color: '#222222',
-    marginBottom: 20,
+    marginBottom: 18,
   },
   input: {
     width: '100%',
-    height: 50,
+    height: 46,
     borderWidth: 1,
     borderColor: '#E3E3E3',
-    borderRadius: 16,
+    borderRadius: 20,
     backgroundColor: '#FAFAFA',
     paddingHorizontal: 16,
-    fontSize: 15,
+    fontSize: 14,
     color: '#222222',
     marginBottom: 12,
   },
   button: {
-    marginTop: 10,
+    marginTop: 8,
     backgroundColor: '#77C9F3',
-    height: 54,
-    borderRadius: 27,
+    width: '100%',
+    height: 50,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
   },
   buttonText: {
     color: '#111111',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
   },
   footer: {
     flexDirection: 'row',
-    marginTop: 25,
+    marginTop: 18,
     alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
   },
   footerText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#7F8B94',
   },
   registerText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#2E6FD8',
     fontWeight: '600',
+  },
+  forgotPasswordText: {
+    marginTop: 18,
+    fontSize: 13,
+    color: '#4B6FAE',
+    textAlign: 'center',
   },
 });
